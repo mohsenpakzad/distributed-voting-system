@@ -1,26 +1,35 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/mohsenpakzad/distributed-voting-system/vote-submitter/database"
+	"github.com/mohsenpakzad/distributed-voting-system/shared/database"
+	"github.com/mohsenpakzad/distributed-voting-system/vote-submitter/handlers"
 	"github.com/mohsenpakzad/distributed-voting-system/vote-submitter/routes"
 )
 
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		fmt.Println("Error loading .env file")
+		log.Fatal("Error loading .env file")
 	}
 
-	db := database.ConnectDB()
+	dbUrl := os.Getenv("DATABASE_URL")
+	if dbUrl == "" {
+		log.Fatal("DATABASE_URL environment variable not set")
+	}
+	db := database.ConnectDB(dbUrl)
+
+	authHandler := handlers.NewAuthHandler(db)
+	electionHandler := handlers.NewElectionHandler(db)
+	userHandler := handlers.NewUserHandler(db)
+	voteHandler := handlers.NewVoteHandler(db)
 
 	r := gin.Default()
-	r.Use(database.InjectDatabaseMiddleware(db))
-	routes.SetupRoutes(r)
+	routes.SetupRoutes(r, authHandler, electionHandler, userHandler, voteHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {

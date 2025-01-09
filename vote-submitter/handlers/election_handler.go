@@ -6,23 +6,36 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/mohsenpakzad/distributed-voting-system/shared/models"
-	"github.com/mohsenpakzad/distributed-voting-system/vote-submitter/database"
+	"gorm.io/gorm"
 )
 
-func GetElections(c *gin.Context) {
-	db := database.GetDB(c)
+type ElectionHandler interface {
+	GetElections(c *gin.Context);
+	GetElection(c *gin.Context);
+	CreateElection(c *gin.Context);
+	UpdateElection(c *gin.Context);
+	DeleteElection(c *gin.Context);
+	AddCandidateToElection(c *gin.Context);
+}
 
+type electionHandler struct {
+    db *gorm.DB;
+}
+
+func NewElectionHandler(db *gorm.DB) ElectionHandler {
+    return &electionHandler{db}
+}
+
+func (h *electionHandler)GetElections(c *gin.Context) {
 	var elections []models.Election
-	if err := db.Find(&elections).Error; err != nil {
+	if err := h.db.Find(&elections).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve elections"})
 		return
 	}
 	c.JSON(http.StatusOK, elections)
 }
 
-func GetElection(c *gin.Context) {
-	db := database.GetDB(c)
-
+func (h *electionHandler) GetElection(c *gin.Context) {
 	id := c.Param("id")
 	_, err := uuid.Parse(id)
 	if err != nil {
@@ -31,23 +44,21 @@ func GetElection(c *gin.Context) {
 	}
 
 	var election models.Election
-	if err := db.Preload("Candidates").Where("id = ?", id).First(&election).Error; err != nil {
+	if err := h.db.Preload("Candidates").Where("id = ?", id).First(&election).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Election not found"})
 		return
 	}
 	c.JSON(http.StatusOK, election)
 }
 
-func CreateElection(c *gin.Context) {
-	db := database.GetDB(c)
-
+func (h *electionHandler) CreateElection(c *gin.Context) {
 	var election models.Election
 	if err := c.ShouldBindJSON(&election); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return
 	}
 
-	if err := db.Create(&election).Error; err != nil {
+	if err := h.db.Create(&election).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create election"})
 		return
 	}
@@ -55,9 +66,7 @@ func CreateElection(c *gin.Context) {
 	c.JSON(http.StatusCreated, election)
 }
 
-func UpdateElection(c *gin.Context) {
-	db := database.GetDB(c)
-
+func (h *electionHandler) UpdateElection(c *gin.Context) {
 	id := c.Param("id")
 	_, err := uuid.Parse(id)
 	if err != nil {
@@ -72,13 +81,13 @@ func UpdateElection(c *gin.Context) {
 	}
 
 	var existingElection models.Election
-	if err := db.First(&existingElection, "id = ?", id).Error; err != nil {
+	if err := h.db.First(&existingElection, "id = ?", id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Election not found"})
 		return
 	}
 
 	updatedElection.ID = existingElection.ID // Important: Preserve the ID
-	if err := db.Save(&updatedElection).Error; err != nil {
+	if err := h.db.Save(&updatedElection).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update election"})
 		return
 	}
@@ -86,9 +95,7 @@ func UpdateElection(c *gin.Context) {
 	c.JSON(http.StatusOK, updatedElection)
 }
 
-func DeleteElection(c *gin.Context) {
-	db := database.GetDB(c)
-
+func (h *electionHandler) DeleteElection(c *gin.Context) {
 	id := c.Param("id")
 	_, err := uuid.Parse(id)
 	if err != nil {
@@ -96,7 +103,7 @@ func DeleteElection(c *gin.Context) {
 		return
 	}
 
-	if err := db.Delete(&models.Election{}, "id = ?", id).Error; err != nil {
+	if err := h.db.Delete(&models.Election{}, "id = ?", id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete election"})
 		return
 	}
@@ -104,9 +111,7 @@ func DeleteElection(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Election deleted successfully"})
 }
 
-func AddCandidateToElection(c *gin.Context) {
-	db := database.GetDB(c)
-
+func (h *electionHandler) AddCandidateToElection(c *gin.Context) {
 	electionID := c.Param("id")
 	_, err := uuid.Parse(electionID)
 	if err != nil {
@@ -121,7 +126,7 @@ func AddCandidateToElection(c *gin.Context) {
 	}
 	candidate.ElectionID = electionID
 
-	if err := db.Create(&candidate).Error; err != nil {
+	if err := h.db.Create(&candidate).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to add candidate"})
 		return
 	}

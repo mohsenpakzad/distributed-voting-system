@@ -6,13 +6,22 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mohsenpakzad/distributed-voting-system/shared/models"
 	"github.com/mohsenpakzad/distributed-voting-system/vote-submitter/auth"
-	"github.com/mohsenpakzad/distributed-voting-system/vote-submitter/database"
 	"github.com/mohsenpakzad/distributed-voting-system/vote-submitter/utils"
+	"gorm.io/gorm"
 )
 
-func Login(c *gin.Context) {
+type AuthHandler interface {
+	Login(c *gin.Context)
+}
+type authHandler struct {
+    db *gorm.DB;
+}
 
-	db := database.GetDB(c)
+func NewAuthHandler(db *gorm.DB) AuthHandler {
+    return &authHandler{db}
+}
+
+func (h *authHandler) Login(c *gin.Context) {
 
 	var input struct {
 		Email    string `json:"email" binding:"required"`
@@ -25,7 +34,7 @@ func Login(c *gin.Context) {
 	}
 
 	var user models.User
-	if err := db.Where("email = ?", input.Email).First(&user).Error; err != nil {
+	if err := h.db.Where("email = ?", input.Email).First(&user).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}

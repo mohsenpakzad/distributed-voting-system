@@ -1,17 +1,32 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 	"time"
 
+	"github.com/IBM/sarama"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/mohsenpakzad/distributed-voting-system/shared/models"
-	"github.com/mohsenpakzad/distributed-voting-system/vote-submitter/database"
+	"github.com/mohsenpakzad/distributed-voting-system/shared/queue"
+	"gorm.io/gorm"
 )
 
-func CastVote(c *gin.Context) {
-	db := database.GetDB(c)
+type VoteHandler interface{
+	CastVote(c *gin.Context);
+}
+
+type voteHandler struct {
+    db *gorm.DB;
+}
+
+func NewVoteHandler(db *gorm.DB) VoteHandler {
+    return &voteHandler{db}
+}
+
+func (h *voteHandler) CastVote(c *gin.Context) {
+	producer := queue.GetKafkaProducer()
 
 	electionID := c.Param("id")
 	_, err := uuid.Parse(electionID)
@@ -46,10 +61,22 @@ func CastVote(c *gin.Context) {
 		Timestamp:   time.Now(),
 	}
 
-	if err := db.Create(&vote).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to cast vote"})
+	// Serialize the vote to JSON
+	message, err := json.Marshal(vote)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to serialize vote"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Vote casted successfully"})
+	// Publish the vote using Sarama
+	_, _, err = producer.SendMessage(&sarama.ProducerMessage{
+		Topic: "votes",
+		Value: sarama.StringEncoder(message),
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to queue vote"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": "Vote queued successfully"})
 }

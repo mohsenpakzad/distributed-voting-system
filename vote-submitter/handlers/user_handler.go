@@ -5,13 +5,23 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mohsenpakzad/distributed-voting-system/shared/models"
-	"github.com/mohsenpakzad/distributed-voting-system/vote-submitter/database"
 	"github.com/mohsenpakzad/distributed-voting-system/vote-submitter/utils"
+	"gorm.io/gorm"
 )
 
-func CreateUser(c *gin.Context) {
-	db := database.GetDB(c)
+type UserHandler interface {
+	CreateUser(c *gin.Context);
+}
 
+type userHandler struct {
+    db *gorm.DB;
+}
+
+func NewUserHandler(db *gorm.DB) UserHandler {
+    return &userHandler{db}
+}
+
+func (h *userHandler) CreateUser(c *gin.Context) {
 	var input models.User
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -24,7 +34,7 @@ func CreateUser(c *gin.Context) {
 	}
 	input.Password = hashedPassword
 
-	if err := db.Create(&input).Error; err != nil {
+	if err := h.db.Create(&input).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
