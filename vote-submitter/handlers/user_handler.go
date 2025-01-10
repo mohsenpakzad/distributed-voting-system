@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mohsenpakzad/distributed-voting-system/shared/models"
-	"github.com/mohsenpakzad/distributed-voting-system/vote-submitter/utils"
+	"github.com/mohsenpakzad/distributed-voting-system/vote-submitter/auth"
 	"gorm.io/gorm"
 )
 
@@ -27,7 +27,7 @@ func (h *userHandler) CreateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	hashedPassword, err := utils.HashPassword(input.Password)
+	hashedPassword, err := auth.HashPassword(input.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 		return

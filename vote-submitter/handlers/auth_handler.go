@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mohsenpakzad/distributed-voting-system/shared/models"
 	"github.com/mohsenpakzad/distributed-voting-system/vote-submitter/auth"
-	"github.com/mohsenpakzad/distributed-voting-system/vote-submitter/utils"
 	"gorm.io/gorm"
 )
 
@@ -41,7 +40,7 @@ func (h *authHandler) Login(c *gin.Context) {
 		return
 	}
 
-	if !utils.CheckPasswordHash(input.Password, user.Password) {
+	if !auth.CheckPasswordHash(input.Password, user.Password) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
