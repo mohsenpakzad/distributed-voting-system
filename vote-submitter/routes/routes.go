@@ -37,7 +37,6 @@ func SetupRoutes(
 		elections.GET("/:id", electionHandler.GetElection)
 		elections.POST("/", electionHandler.CreateElection).Use(auth.RoleMiddleware("admin"))
 		elections.PUT("/:id", electionHandler.UpdateElection).Use(auth.RoleMiddleware("admin"))
-		elections.DELETE("/:id", electionHandler.DeleteElection).Use(auth.RoleMiddleware("admin"))
 		elections.POST("/:id/candidates", electionHandler.AddCandidateToElection).Use(auth.RoleMiddleware("admin"))
 	}
 

@@ -14,7 +14,6 @@ type ElectionHandler interface {
 	GetElection(c *gin.Context);
 	CreateElection(c *gin.Context);
 	UpdateElection(c *gin.Context);
-	DeleteElection(c *gin.Context);
 	AddCandidateToElection(c *gin.Context);
 }
 
@@ -93,22 +92,6 @@ func (h *electionHandler) UpdateElection(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, updatedElection)
-}
-
-func (h *electionHandler) DeleteElection(c *gin.Context) {
-	id := c.Param("id")
-	_, err := uuid.Parse(id)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid election ID format"})
-		return
-	}
-
-	if err := h.db.Delete(&models.Election{}, "id = ?", id).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete election"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "Election deleted successfully"})
 }
 
 func (h *electionHandler) AddCandidateToElection(c *gin.Context) {
