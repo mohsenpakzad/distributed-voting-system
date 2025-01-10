@@ -43,7 +43,10 @@ func (h *electionHandler) GetElection(c *gin.Context) {
 	}
 
 	var election models.Election
-	if err := h.db.Preload("Candidates").Where("id = ?", id).First(&election).Error; err != nil {
+	if err := h.db.Preload("Candidates").
+		Where("id = ?", id).
+		First(&election).Error;
+		err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Election not found"})
 		return
 	}

@@ -34,7 +34,9 @@ func (h *authHandler) Login(c *gin.Context) {
 	}
 
 	var user models.User
-	if err := h.db.Where("email = ?", input.Email).First(&user).Error; err != nil {
+	if err := h.db.Where("email = ?", input.Email).
+		First(&user).Error;
+		err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
