@@ -110,6 +110,13 @@ func (h *electionHandler) AddCandidateToElection(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return
 	}
+
+	var election models.Election
+	if err := h.db.First(&election, "id = ?", electionID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Election not found"})
+		return
+	}
+
 	candidate.ElectionID = electionID
 
 	if err := h.db.Create(&candidate).Error; err != nil {
