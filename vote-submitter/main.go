@@ -3,10 +3,12 @@ package main
 import (
 	"log"
 	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/mohsenpakzad/distributed-voting-system/shared/database"
+	"github.com/mohsenpakzad/distributed-voting-system/shared/queue"
 	"github.com/mohsenpakzad/distributed-voting-system/vote-submitter/handlers"
 	"github.com/mohsenpakzad/distributed-voting-system/vote-submitter/routes"
 )
@@ -22,11 +24,25 @@ func main() {
 		log.Fatal("DATABASE_URL environment variable not set")
 	}
 	db := database.ConnectDB(dbUrl)
+	defer database.CloseDB(db)
+
+	kafkaBrokers := os.Getenv("KAFKA_BROKERS")
+	if kafkaBrokers == "" {
+		log.Fatal("KAFKA_BROKERS environment variable not set")
+	}
+
+	unverifiedVoteProducer, err := queue.NewUnverifiedVoteProducer(
+		strings.Split(kafkaBrokers, ","),
+	)
+	if err != nil {
+		log.Fatalf("Failed to create unverified vote producer: %v", err)
+	}
+	defer unverifiedVoteProducer.Close()
 
 	authHandler := handlers.NewAuthHandler(db)
 	electionHandler := handlers.NewElectionHandler(db)
 	userHandler := handlers.NewUserHandler(db)
-	voteHandler := handlers.NewVoteHandler(db)
+	voteHandler := handlers.NewVoteHandler(unverifiedVoteProducer)
 
 	r := gin.Default()
 	routes.SetupRoutes(r, authHandler, electionHandler, userHandler, voteHandler)
