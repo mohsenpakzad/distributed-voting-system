@@ -27,7 +27,7 @@ func NewElectionHandler(db *gorm.DB) ElectionHandler {
 
 func (h *electionHandler)GetElections(c *gin.Context) {
 	var elections []models.Election
-	if err := h.db.Find(&elections).Error; err != nil {
+	if err := h.db.Preload("Candidates").Find(&elections).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve elections"})
 		return
 	}
