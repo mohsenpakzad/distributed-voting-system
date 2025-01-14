@@ -10,22 +10,22 @@ import (
 )
 
 type ElectionHandler interface {
-	GetElections(c *gin.Context);
-	GetElection(c *gin.Context);
-	CreateElection(c *gin.Context);
-	UpdateElection(c *gin.Context);
-	AddCandidateToElection(c *gin.Context);
+	GetElections(c *gin.Context)
+	GetElection(c *gin.Context)
+	CreateElection(c *gin.Context)
+	UpdateElection(c *gin.Context)
+	AddCandidateToElection(c *gin.Context)
 }
 
 type electionHandler struct {
-    db *gorm.DB;
+	db *gorm.DB
 }
 
 func NewElectionHandler(db *gorm.DB) ElectionHandler {
-    return &electionHandler{db}
+	return &electionHandler{db}
 }
 
-func (h *electionHandler)GetElections(c *gin.Context) {
+func (h *electionHandler) GetElections(c *gin.Context) {
 	var elections []models.Election
 	if err := h.db.Preload("Candidates").Find(&elections).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve elections"})
@@ -45,8 +45,7 @@ func (h *electionHandler) GetElection(c *gin.Context) {
 	var election models.Election
 	if err := h.db.Preload("Candidates").
 		Where("id = ?", id).
-		First(&election).Error;
-		err != nil {
+		First(&election).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Election not found"})
 		return
 	}
