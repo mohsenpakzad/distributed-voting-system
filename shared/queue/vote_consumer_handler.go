@@ -10,17 +10,17 @@ import (
 
 // VoteConsumerHandler handles the messages consumed by the Kafka consumer group
 type VoteConsumerHandler struct {
-	voteProcessor VoteValidator
+	voteProcessor VoteProcessor
 	ready         chan bool
 }
 
-// VoteValidator defines the interface for processing votes
-type VoteValidator interface {
-	ValidateVote(vote models.Vote)
+// VoteProcessor defines the interface for processing votes
+type VoteProcessor interface {
+	ProcessVote(vote models.Vote)
 }
 
 // NewVoteConsumerHandler creates a new UnverifiedVoteConsumerHandler with the provided VoteProcessor
-func NewVoteConsumerHandler(voteProcessor VoteValidator) *VoteConsumerHandler {
+func NewVoteConsumerHandler(voteProcessor VoteProcessor) *VoteConsumerHandler {
 	return &VoteConsumerHandler{
 		voteProcessor: voteProcessor,
 		ready:         make(chan bool),
@@ -52,7 +52,7 @@ func (h *VoteConsumerHandler) ConsumeClaim(
 
 		log.Printf("Received vote: %+v\n", vote)
 
-		h.voteProcessor.ValidateVote(vote)
+		h.voteProcessor.ProcessVote(vote)
 
 		// Mark the message as processed
 		session.MarkMessage(message, "")

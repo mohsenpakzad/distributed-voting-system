@@ -45,12 +45,8 @@ func main() {
 	}
 	defer validatedVoteProducer.Close()
 
-	// Set up the vote processor implementation
 	UnverifiedVoteValidator := validators.NewUnverifiedVoteValidator(db, validatedVoteProducer)
-
-	// Set up the consumer handler with the vote processor injected
 	voteHandler := queue.NewVoteConsumerHandler(UnverifiedVoteValidator)
-
 	unverifiedVoteConsumer, err := queue.NewVoteConsumer(
 		kafkaBrokersArray,
 		queue.UnverifiedVoteConsumer,

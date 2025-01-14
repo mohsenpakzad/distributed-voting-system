@@ -25,7 +25,7 @@ func NewUnverifiedVoteValidator(db *gorm.DB, vp *queue.VoteProducer) *Unverified
 }
 
 // ProcessVote validates and stores the vote in the database
-func (p *UnverifiedVoteValidator) ValidateVote(vote models.Vote) {
+func (p *UnverifiedVoteValidator) ProcessVote(vote models.Vote) {
 	// Validate the vote
 	for _, validator := range p.validators {
 		if err := validator.Validate(vote); err != nil {
