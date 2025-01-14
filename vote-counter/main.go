@@ -8,8 +8,10 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/mohsenpakzad/distributed-voting-system/shared/queue"
+	"github.com/mohsenpakzad/distributed-voting-system/vote-counter/api"
 	"github.com/mohsenpakzad/distributed-voting-system/vote-counter/counter"
 )
 
@@ -63,6 +65,21 @@ func main() {
 			log.Printf("Error starting consumer: %v", err)
 			cancel()
 		}
+	}()
+
+	// Start API server in a goroutine
+	go func() {
+		router := gin.Default()
+
+		electionResultHandler := api.NewElectionResultHandler(node)
+
+		api.SetupRoutes(router, electionResultHandler)
+
+		port := os.Getenv("API_PORT")
+		if port == "" {
+			port = "3001"
+		}
+		router.Run(":" + port)
 	}()
 
 	// Wait for shutdown signal
