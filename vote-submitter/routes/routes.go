@@ -15,6 +15,9 @@ func SetupRoutes(
 	notificationHandler handlers.NotificationHandler,
 ) {
 
+	// WARNING: Remove this in production!
+	r.POST("/secret/users", userHandler.CreateUser)
+
 	authGroup := r.Group("/auth")
 	{
 		authGroup.POST("/login", authHandler.Login)
