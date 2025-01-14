@@ -4,22 +4,24 @@ import (
 	"log"
 
 	"github.com/mohsenpakzad/distributed-voting-system/shared/models"
+	"github.com/mohsenpakzad/distributed-voting-system/shared/queue"
 	"gorm.io/gorm"
 )
 
 type UnverifiedVoteValidator struct {
-	db         *gorm.DB
-	validators []VoteValidator
+	db                    *gorm.DB
+	validatedVoteProducer *queue.VoteProducer
+	validators            []VoteValidator
 }
 
-func NewUnverifiedVoteValidator(db *gorm.DB) *UnverifiedVoteValidator {
+func NewUnverifiedVoteValidator(db *gorm.DB, vp *queue.VoteProducer) *UnverifiedVoteValidator {
 	validators := []VoteValidator{
 		NewElectionExistValidator(db),
 		NewCandidateExistValidator(db),
 		NewDuplicateVoteValidator(db),
 	}
 
-	return &UnverifiedVoteValidator{db, validators}
+	return &UnverifiedVoteValidator{db, vp, validators}
 }
 
 // ProcessVote validates and stores the vote in the database
@@ -38,5 +40,10 @@ func (p *UnverifiedVoteValidator) ValidateVote(vote models.Vote) {
 		return
 	}
 
+	err := p.validatedVoteProducer.SendVote(&vote)
+	if err != nil {
+		log.Printf("Failed to queue vote: %v", err)
+		return
+	}
 	log.Printf("Vote processed successfully: %v", vote)
 }

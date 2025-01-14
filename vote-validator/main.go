@@ -34,15 +34,25 @@ func main() {
 	if kafkaBrokers == "" {
 		log.Fatal("KAFKA_BROKERS environment variable not set")
 	}
+	kafkaBrokersArray := strings.Split(kafkaBrokers, ",")
+
+	validatedVoteProducer, err := queue.NewVoteProducer(
+		kafkaBrokersArray,
+		queue.ValidatedVoteProducer,
+	)
+	if err != nil {
+		log.Fatalf("Failed to create validated vote producer: %v", err)
+	}
+	defer validatedVoteProducer.Close()
 
 	// Set up the vote processor implementation
-	UnverifiedVoteValidator := validators.NewUnverifiedVoteValidator(db)
+	UnverifiedVoteValidator := validators.NewUnverifiedVoteValidator(db, validatedVoteProducer)
 
 	// Set up the consumer handler with the vote processor injected
 	voteHandler := queue.NewVoteConsumerHandler(UnverifiedVoteValidator)
 
 	unverifiedVoteConsumer, err := queue.NewVoteConsumer(
-		strings.Split(kafkaBrokers, ","),
+		kafkaBrokersArray,
 		queue.UnverifiedVoteConsumer,
 		voteHandler,
 	)
