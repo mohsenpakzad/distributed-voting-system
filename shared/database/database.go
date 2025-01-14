@@ -16,7 +16,11 @@ func ConnectDB(dbUrl string) *gorm.DB {
 	}
 
 	err = db.AutoMigrate(
-		&models.User{}, &models.Election{}, &models.Candidate{}, &models.Vote{},
+		&models.User{},
+		&models.Election{},
+		&models.Candidate{},
+		&models.Vote{},
+		&models.Notification{},
 	)
 	if err != nil {
 		log.Fatal("failed to automigrate:", err)
