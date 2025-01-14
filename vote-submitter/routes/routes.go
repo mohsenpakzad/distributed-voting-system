@@ -11,7 +11,9 @@ func SetupRoutes(
 	authHandler handlers.AuthHandler,
 	electionHandler handlers.ElectionHandler,
 	userHandler handlers.UserHandler,
-	voteHandler handlers.VoteHandler) {
+	voteHandler handlers.VoteHandler,
+	notificationHandler handlers.NotificationHandler,
+) {
 
 	authGroup := r.Group("/auth")
 	{
@@ -45,4 +47,14 @@ func SetupRoutes(
 	{
 		votes.POST("/:id", voteHandler.CastVote).Use(auth.RoleMiddleware("voter"))
 	}
+
+	// Notification routes
+	notifications := authorized.Group("/notifications")
+	{
+		notifications.GET("/", notificationHandler.GetAllNotifications)
+		notifications.GET("/unread", notificationHandler.GetUnreadNotifications)
+		notifications.PATCH("/:id/read", notificationHandler.MarkAsRead)
+		notifications.PATCH("/read-all", notificationHandler.MarkAllAsRead)
+	}
+
 }

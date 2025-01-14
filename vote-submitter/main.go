@@ -44,9 +44,16 @@ func main() {
 	electionHandler := handlers.NewElectionHandler(db)
 	userHandler := handlers.NewUserHandler(db)
 	voteHandler := handlers.NewVoteHandler(unverifiedVoteProducer)
+	notificationHandler := handlers.NewNotificationHandler(db)
 
 	r := gin.Default()
-	routes.SetupRoutes(r, authHandler, electionHandler, userHandler, voteHandler)
+	routes.SetupRoutes(r,
+		authHandler,
+		electionHandler,
+		userHandler,
+		voteHandler,
+		notificationHandler,
+	)
 
 	port := os.Getenv("PORT")
 	if port == "" {
