@@ -31,8 +31,9 @@ func main() {
 		log.Fatal("KAFKA_BROKERS environment variable not set")
 	}
 
-	unverifiedVoteProducer, err := queue.NewUnverifiedVoteProducer(
+	unverifiedVoteProducer, err := queue.NewVoteProducer(
 		strings.Split(kafkaBrokers, ","),
+		queue.UnverifiedVoteProducer,
 	)
 	if err != nil {
 		log.Fatalf("Failed to create unverified vote producer: %v", err)

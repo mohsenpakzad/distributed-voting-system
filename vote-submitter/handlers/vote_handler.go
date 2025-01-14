@@ -14,10 +14,10 @@ type VoteHandler interface {
 }
 
 type voteHandler struct {
-	unverifiedVoteProducer *queue.UnverifiedVoteProducer
+	unverifiedVoteProducer *queue.VoteProducer
 }
 
-func NewVoteHandler(vp *queue.UnverifiedVoteProducer) VoteHandler {
+func NewVoteHandler(vp *queue.VoteProducer) VoteHandler {
 	return &voteHandler{vp}
 }
 

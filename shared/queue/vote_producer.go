@@ -9,13 +9,25 @@ import (
 	"github.com/mohsenpakzad/distributed-voting-system/shared/models"
 )
 
-// UnverifiedVoteProducer represents a Kafka message producer
-type UnverifiedVoteProducer struct {
+// VoteProducer represents a Kafka message producer
+type VoteProducer struct {
 	producer sarama.SyncProducer
+	topic    string
 }
 
-// NewUnverifiedVoteProducer creates a new Kafka producer
-func NewUnverifiedVoteProducer(brokers []string) (*UnverifiedVoteProducer, error) {
+type VoteProducerType struct {
+	topic string
+}
+
+var (
+	UnverifiedVoteProducer = VoteProducerType{unverifiedVoteTopic}
+	ValidatedVoteProducer  = VoteProducerType{validatedVoteTopic}
+)
+
+// NewVoteProducer creates a new Kafka producer
+func NewVoteProducer(
+	brokers []string,
+	typ VoteProducerType) (*VoteProducer, error) {
 	config := sarama.NewConfig()
 	config.Producer.Return.Successes = true
 	config.Producer.RequiredAcks = sarama.WaitForAll
@@ -26,11 +38,11 @@ func NewUnverifiedVoteProducer(brokers []string) (*UnverifiedVoteProducer, error
 		return nil, fmt.Errorf("failed to create producer: %w", err)
 	}
 
-	return &UnverifiedVoteProducer{producer: producer}, nil
+	return &VoteProducer{producer, typ.topic}, nil
 }
 
 // SendVote sends a vote to the Kafka topic
-func (p *UnverifiedVoteProducer) SendVote(vote *models.Vote) error {
+func (p *VoteProducer) SendVote(vote *models.Vote) error {
 	// Serialize the vote to JSON
 	voteJSON, err := json.Marshal(vote)
 	if err != nil {
@@ -38,7 +50,7 @@ func (p *UnverifiedVoteProducer) SendVote(vote *models.Vote) error {
 	}
 
 	msg := &sarama.ProducerMessage{
-		Topic: unverifiedVoteTopic,
+		Topic: p.topic,
 		Key:   sarama.StringEncoder(vote.ID), // Use vote ID as the message key
 		Value: sarama.ByteEncoder(voteJSON),
 	}
@@ -53,6 +65,6 @@ func (p *UnverifiedVoteProducer) SendVote(vote *models.Vote) error {
 }
 
 // Close closes the producer
-func (p *UnverifiedVoteProducer) Close() error {
+func (p *VoteProducer) Close() error {
 	return p.producer.Close()
 }

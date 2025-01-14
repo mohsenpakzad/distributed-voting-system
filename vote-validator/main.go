@@ -41,8 +41,9 @@ func main() {
 	// Set up the consumer handler with the vote processor injected
 	voteHandler := queue.NewVoteConsumerHandler(UnverifiedVoteValidator)
 
-	unverifiedVoteConsumer, err := queue.NewUnverifiedVoteConsumer(
+	unverifiedVoteConsumer, err := queue.NewVoteConsumer(
 		strings.Split(kafkaBrokers, ","),
+		queue.UnverifiedVoteConsumer,
 		voteHandler,
 	)
 	if err != nil {
