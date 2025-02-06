@@ -1,0 +1,229 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "distributed-voting-system vote-submitter",
+    "collectionId": "dd8c3b28-aea0-464e-87bd-f10d2c04df7c",
+    "dateExported": "2025-02-06T12:38:01.596Z",
+    "version": "1.2",
+    "folders": [
+        {
+            "_id": "ba4706e8-1e0c-45c5-b4f3-21bd8ebdf76d",
+            "name": "users",
+            "containerId": "",
+            "created": "2025-01-14T19:41:46.572Z",
+            "sortNum": 5000
+        },
+        {
+            "_id": "df6a3521-0c44-4e27-88c7-e95205fb6a22",
+            "name": "elections",
+            "containerId": "",
+            "created": "2025-01-14T19:41:08.561Z",
+            "sortNum": 7500
+        },
+        {
+            "_id": "1a72caf2-fe83-4171-9011-cdd5d126079d",
+            "name": "notifications",
+            "containerId": "",
+            "created": "2025-01-14T19:42:56.660Z",
+            "sortNum": 8750
+        }
+    ],
+    "requests": [
+        {
+            "_id": "534e523a-be5e-4415-b552-e40905f846e1",
+            "colId": "dd8c3b28-aea0-464e-87bd-f10d2c04df7c",
+            "containerId": "df6a3521-0c44-4e27-88c7-e95205fb6a22",
+            "name": "Add Election",
+            "url": "api/elections",
+            "method": "POST",
+            "sortNum": 5000,
+            "created": "2024-12-28T12:39:41.119Z",
+            "modified": "2025-01-14T19:53:04.470Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"Election1\",\n  \"description\": \"This is a good election!\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "ff709caa-2b47-43ac-9a66-205402fc9639",
+            "colId": "dd8c3b28-aea0-464e-87bd-f10d2c04df7c",
+            "containerId": "ba4706e8-1e0c-45c5-b4f3-21bd8ebdf76d",
+            "name": "Public Secret Add User",
+            "url": "secret/users",
+            "method": "POST",
+            "sortNum": 5000,
+            "created": "2025-01-14T19:31:08.850Z",
+            "modified": "2025-01-15T07:43:28.420Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"admin\",\n  \"role\": \"admin\",\n  \"email\": \"admin@admin.com\",\n  \"password\": \"admin\"\n}\n",
+                "form": []
+            }
+        },
+        {
+            "_id": "efc3ffed-f620-4a96-880d-63c33450a187",
+            "colId": "dd8c3b28-aea0-464e-87bd-f10d2c04df7c",
+            "containerId": "df6a3521-0c44-4e27-88c7-e95205fb6a22",
+            "name": "Get Elections",
+            "url": "api/elections",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2024-12-28T12:46:12.099Z",
+            "modified": "2025-01-14T19:53:08.146Z",
+            "headers": []
+        },
+        {
+            "_id": "0d2dd5d5-efb2-4cf5-a29a-61760f988095",
+            "colId": "dd8c3b28-aea0-464e-87bd-f10d2c04df7c",
+            "containerId": "ba4706e8-1e0c-45c5-b4f3-21bd8ebdf76d",
+            "name": "Add User",
+            "url": "api/users",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2024-12-28T13:16:44.899Z",
+            "modified": "2025-01-14T20:05:47.081Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"voter\",\n  \"role\": \"voter\",\n  \"email\": \"voter@voter.com\",\n  \"password\": \"voter\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "086502e4-7c6b-4f07-8aa5-d53bed15b9f0",
+            "colId": "dd8c3b28-aea0-464e-87bd-f10d2c04df7c",
+            "containerId": "1a72caf2-fe83-4171-9011-cdd5d126079d",
+            "name": "Get All User Notifications",
+            "url": "api/notifications/",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2025-01-14T19:38:45.136Z",
+            "modified": "2025-01-14T20:14:34.665Z",
+            "headers": []
+        },
+        {
+            "_id": "dc2d42a3-a957-44a4-b5fd-56c08082bfe6",
+            "colId": "dd8c3b28-aea0-464e-87bd-f10d2c04df7c",
+            "containerId": "",
+            "name": "Login",
+            "url": "auth/login",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2024-12-28T12:39:12.381Z",
+            "modified": "2025-01-15T07:46:03.444Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email\": \"voter@voter.com\",\n  \"password\": \"voter\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "491c8655-eef5-4612-b7cd-302efd8df7ef",
+            "colId": "dd8c3b28-aea0-464e-87bd-f10d2c04df7c",
+            "containerId": "1a72caf2-fe83-4171-9011-cdd5d126079d",
+            "name": "Get Unread User Notifications",
+            "url": "api/notifications/unread",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2025-01-14T19:39:26.876Z",
+            "modified": "2025-01-14T19:49:18.334Z",
+            "headers": []
+        },
+        {
+            "_id": "f1e82c91-8f2f-47e2-a624-4871ca69ad75",
+            "colId": "dd8c3b28-aea0-464e-87bd-f10d2c04df7c",
+            "containerId": "df6a3521-0c44-4e27-88c7-e95205fb6a22",
+            "name": "Get Election",
+            "url": "api/elections/:id",
+            "method": "GET",
+            "sortNum": 30000,
+            "created": "2024-12-28T13:37:45.131Z",
+            "modified": "2025-01-14T19:53:11.369Z",
+            "headers": []
+        },
+        {
+            "_id": "4101f223-66aa-40cb-8208-df75c3152c46",
+            "colId": "dd8c3b28-aea0-464e-87bd-f10d2c04df7c",
+            "containerId": "",
+            "name": "Cast Vote",
+            "url": "api/votes/:election-id",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2025-01-10T18:28:02.668Z",
+            "modified": "2025-02-06T12:36:09.241Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"candidate_id\": \"\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "e8e351cd-8e08-468a-97e2-fab06c3a574d",
+            "colId": "dd8c3b28-aea0-464e-87bd-f10d2c04df7c",
+            "containerId": "df6a3521-0c44-4e27-88c7-e95205fb6a22",
+            "name": "Update Election",
+            "url": "api/elections/:id",
+            "method": "PUT",
+            "sortNum": 40000,
+            "created": "2025-01-14T19:33:03.973Z",
+            "modified": "2025-02-06T12:34:45.144Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"Election1\",\n  \"description\": \"This is a very good election!\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "f27802ee-580e-4466-b3a0-e719190fc665",
+            "colId": "dd8c3b28-aea0-464e-87bd-f10d2c04df7c",
+            "containerId": "df6a3521-0c44-4e27-88c7-e95205fb6a22",
+            "name": "Add Candidate",
+            "url": "api/elections/:election-id/candidates",
+            "method": "POST",
+            "sortNum": 50000,
+            "created": "2024-12-28T13:28:09.311Z",
+            "modified": "2025-02-06T12:35:16.363Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"option1\",\n  \"description\": \"Option1 is perfect option!\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "a0c414b0-17b3-4225-a8f6-69d94b0fb93b",
+            "colId": "dd8c3b28-aea0-464e-87bd-f10d2c04df7c",
+            "containerId": "1a72caf2-fe83-4171-9011-cdd5d126079d",
+            "name": "Mark A User Notification As Read",
+            "url": "api/notifications/:id/read",
+            "method": "PATCH",
+            "sortNum": 100000,
+            "created": "2025-01-14T19:43:35.547Z",
+            "modified": "2025-01-14T20:10:00.926Z",
+            "headers": []
+        },
+        {
+            "_id": "b21e0efe-ec40-4576-b264-bf7665bc18f4",
+            "colId": "dd8c3b28-aea0-464e-87bd-f10d2c04df7c",
+            "containerId": "1a72caf2-fe83-4171-9011-cdd5d126079d",
+            "name": "Mark All User Notification As Read",
+            "url": "api/notifications/read-all",
+            "method": "PATCH",
+            "sortNum": 110000,
+            "created": "2025-01-14T19:44:23.219Z",
+            "modified": "2025-01-14T19:50:43.688Z",
+            "headers": []
+        }
+    ],
+    "settings": {
+        "options": {
+            "baseUrl": "http://localhost:3000/"
+        }
+    },
+    "ref": "reCUfM9nM1agK_MaAEwm0nW7Kj4Uyf-tqAYK2eWAOZxxc-4w4cPx8KgWj3mWFnCGcMY8MtTPRE-o-soVw-8lhQ"
+}

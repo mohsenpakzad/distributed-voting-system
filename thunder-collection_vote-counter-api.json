@@ -1,0 +1,40 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "distributed-voting-system vote-counter",
+    "collectionId": "2402ff7b-2b31-414e-980f-45c6749fa0ad",
+    "dateExported": "2025-02-06T12:38:12.515Z",
+    "version": "1.2",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "6c20db41-875b-4307-8832-46aa37bc0c30",
+            "colId": "2402ff7b-2b31-414e-980f-45c6749fa0ad",
+            "containerId": "",
+            "name": "Get All Elections Result",
+            "url": "api/elections-result",
+            "method": "GET",
+            "sortNum": 5000,
+            "created": "2025-01-14T20:15:37.704Z",
+            "modified": "2025-01-14T20:16:25.947Z",
+            "headers": []
+        },
+        {
+            "_id": "6f9cd2c9-1037-409a-9508-2c446d1bc52a",
+            "colId": "2402ff7b-2b31-414e-980f-45c6749fa0ad",
+            "containerId": "",
+            "name": "Get A Election Result",
+            "url": "api/elections-result/:id",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2025-01-14T20:15:21.976Z",
+            "modified": "2025-01-14T20:16:43.250Z",
+            "headers": []
+        }
+    ],
+    "settings": {
+        "options": {
+            "baseUrl": "http://localhost:3001/"
+        }
+    },
+    "ref": "xzKsaQVFTkasC9oaHLeqqbVI19pkThOZ1KU5fBtRGIsx9w7-CinwTLlmOU51KjJiirGUUdt5Yrp5fa6u293J7w"
+}
